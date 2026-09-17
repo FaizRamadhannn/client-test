@@ -1,0 +1,70 @@
+---
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+import type { Business } from "../../data/business";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const content = business.content[lang];
+
+const items = business.positioning.uniqueSellingPoints;
+---
+
+<Section id="why-choose-us" class="bg-[#6b1d2f] text-white">
+  <Container>
+    <SectionHeading
+      eyebrow={lang === "id" ? "Keunggulan kami" : "The Sahaja standard"}
+      title={
+        lang === "id"
+          ? "Alasan memilih kami"
+          : "Why customers choose us"
+      }
+      description={content.whyChooseUs[0]?.description}
+    />
+
+    {
+      items.length > 0 ? (
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item, index) => {
+            const detail = content.whyChooseUs[index];
+
+            return (
+              <article class="border-t border-[#e8a87c]/60 py-6">
+                <div
+                  class="mb-5 flex h-10 w-10 items-center justify-center rounded-full border border-[#e8a87c] text-sm font-bold text-[#e8a87c]"
+                  aria-hidden="true"
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+
+                <h3 class="text-lg leading-tight text-white">
+                  {detail?.title || item}
+                </h3>
+
+                {
+                  detail?.description && (
+                    <p class="mt-3 text-sm leading-6 text-white/65">
+                      {detail.description}
+                    </p>
+                  )
+                }
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="mt-10 text-muted-foreground">
+          {lang === "id"
+            ? "Informasi keunggulan bisnis akan tersedia segera."
+            : "Business advantages will be available soon."}
+        </p>
+      )
+    }
+  </Container>
+</Section>

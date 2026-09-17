@@ -1,0 +1,88 @@
+---
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+import type { Business } from "../../data/business";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const testimonials = business.testimonials;
+---
+
+<Section id="testimonials" class="bg-[#faf7f5]">
+  <Container>
+    <SectionHeading
+      eyebrow={lang === "id" ? "Testimoni" : "Testimonials"}
+      title={
+        lang === "id"
+          ? "Apa kata pelanggan kami"
+          : "What our customers say"
+      }
+      description={
+        lang === "id"
+          ? "Pengalaman pelanggan membantu memberikan gambaran nyata tentang layanan kami."
+          : "Customer experiences provide a real perspective on our services."
+      }
+    />
+
+    {
+      testimonials.length > 0 ? (
+        <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((testimonial) => (
+            <article class="rounded-2xl border border-border bg-background p-6">
+              <div
+                class="flex items-center gap-1"
+                aria-label={`${testimonial.rating} out of 5 stars`}
+              >
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <span
+                    class:list={[
+                      "text-sm",
+                      index < testimonial.rating
+                        ? "text-foreground"
+                        : "text-muted-foreground",
+                    ]}
+                    aria-hidden="true"
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+
+              <blockquote class="mt-5 text-sm leading-7 text-foreground">
+                “{testimonial.text}”
+              </blockquote>
+
+              <footer class="mt-6 border-t border-border pt-4">
+                <p class="font-medium">
+                  {testimonial.name}
+                </p>
+
+                {
+                  testimonial.date && (
+                    <p class="mt-1 text-xs text-muted-foreground">
+                      {testimonial.date}
+                    </p>
+                  )
+                }
+              </footer>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="mt-10 rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] bg-[var(--color-muted)] p-8 text-center">
+          <p class="text-sm text-muted-foreground">
+            {lang === "id"
+              ? "Testimoni pelanggan akan tersedia segera."
+              : "Customer testimonials will be available soon."}
+          </p>
+        </div>
+      )
+    }
+  </Container>
+</Section>

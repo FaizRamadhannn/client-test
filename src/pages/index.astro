@@ -1,0 +1,36 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/layout/Navbar.astro";
+import Footer from "../components/layout/Footer.astro";
+
+import Hero from "../components/sections/Hero.astro";
+import About from "../components/sections/About.astro";
+import Services from "../components/sections/Services.astro";
+import WhyChooseUs from "../components/sections/WhyChooseUs.astro";
+import Process from "../components/sections/Process.astro";
+import Menu from "../components/sections/Menu.astro";
+import Testimonials from "../components/sections/Testimonials.astro";
+import Gallery from "../components/sections/Gallery.astro";
+import FAQ from "../components/sections/FAQ.astro";
+import CTA from "../components/sections/CTA.astro";
+
+import { business } from "../data/business";
+---
+
+<Layout business={business}>
+  <Navbar business={business} />
+
+  <main>
+    <Hero business={business} />
+    <About business={business} />
+    <Services business={business} />
+    <WhyChooseUs business={business} lang="id" />
+    <Process business={business} lang="id" />
+    <Menu business={business} lang="id" />
+    <Testimonials business={business} lang="id" />
+    <Gallery business={business} lang="id" />
+    <FAQ business={business} lang="id" />
+    <CTA business={business} lang="id" />
+    <Footer business={business} lang="id" />
+  </main>
+</Layout>

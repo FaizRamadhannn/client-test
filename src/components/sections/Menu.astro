@@ -1,0 +1,87 @@
+---
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+import type { Business } from "../../data/business";
+import menuImage from "../../assets/menu.webp";
+import boxImage from "../../assets/cateringHarian.webp";
+import riceImage from "../../assets/naskunDetail.webp";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+const whatsapp = `https://wa.me/${business.contact.whatsapp}`;
+const categories = lang === "id"
+  ? ["Pilihan menu", "Hidangan acara", "Nasi kotak"]
+  : ["Menu highlights", "Event catering", "Lunch boxes"];
+const items = [
+  { title: lang === "id" ? "Menu pilihan Sahaja" : "Sahaja menu highlights", image: menuImage.src, copy: business.positioning.valueProposition },
+  { title: lang === "id" ? "Catering acara" : "Event catering", image: boxImage.src, copy: business.services[0]?.description },
+  { title: lang === "id" ? "Pesanan nasi kotak" : "Lunch box orders", image: riceImage.src, copy: business.services[1]?.description },
+];
+---
+
+<Section id="menu" class="bg-white">
+  <Container>
+    <SectionHeading
+      eyebrow={lang === "id" ? "Menu pilihan" : "Curated menu"}
+      title={lang === "id" ? "Hidangan untuk momen yang berarti" : "Food for meaningful moments"}
+      description={lang === "id" ? "Pilih inspirasi hidangan, lalu konsultasikan jumlah dan kebutuhan acara Anda." : "Choose an inspiration, then share your guest count and event needs with us."}
+    />
+
+    <div class="mb-8 flex flex-wrap gap-2" role="tablist" aria-label={lang === "id" ? "Kategori menu" : "Menu categories"}>
+      {categories.map((category, index) => (
+        <button
+          type="button"
+          role="tab"
+          aria-selected={index === 0 ? "true" : "false"}
+          data-menu-tab={index}
+          class:list={["rounded-full border px-4 py-2 text-xs font-semibold transition-colors", index === 0 ? "border-[#6b1d2f] bg-[#6b1d2f] text-white" : "border-[#eadfe0] text-[#6b1d2f] hover:border-[#6b1d2f]"]}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+
+    <div class="grid gap-5 md:grid-cols-3">
+      {items.map((item, index) => (
+        <article data-menu-item={index} class="group overflow-hidden rounded border border-[#eadfe0] bg-[#faf7f5]">
+          <div class="overflow-hidden">
+            <img src={item.image} alt={item.title} loading="lazy" class="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          </div>
+          <div class="p-6">
+            <p class="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-[#d4af37]">0{index + 1}</p>
+            <h3 class="text-xl text-[#6b1d2f]">{item.title}</h3>
+            <p class="mt-3 text-sm leading-6 text-[#74676a]">{item.copy}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-8 flex flex-col items-start justify-between gap-4 border-t border-[#eadfe0] pt-6 sm:flex-row sm:items-center">
+      <p class="text-sm text-[#74676a]">{lang === "id" ? "Menu lengkap disesuaikan dengan kebutuhan dan anggaran acara." : "Full menus are tailored to your event needs and budget."}</p>
+      <a href={`${whatsapp}?...text=${encodeURIComponent(lang === "id" ? "Halo, saya ingin meminta menu lengkap Sahaja Catering." : "Hello, I would like to request the full Sahaja Catering menu.")}`} target="_blank" rel="noopener noreferrer" class="inline-flex rounded-full bg-[#e8a87c] px-5 py-3 text-sm font-bold text-[#2b0b14] hover:bg-[#6b1d2f] hover:text-white">{lang === "id" ? "Minta menu lengkap" : "Request full menu"}</a>
+    </div>
+  </Container>
+</Section>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>("[data-menu-tab]");
+  const items = document.querySelectorAll<HTMLElement>("[data-menu-item]");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((button) => {
+        const active = button === tab;
+        button.setAttribute("aria-selected", String(active));
+        button.classList.toggle("bg-[#6b1d2f]", active);
+        button.classList.toggle("text-white", active);
+        button.classList.toggle("border-[#6b1d2f]", active);
+      });
+      const selected = Number(tab.dataset.menuTab);
+      items.forEach((item, index) => item.classList.toggle("hidden", selected !== 0 && index !== selected));
+    });
+  });
+</script>

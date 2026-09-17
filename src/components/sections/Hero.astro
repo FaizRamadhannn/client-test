@@ -1,0 +1,97 @@
+---
+import type { Business } from "../../data/business";
+import Button from "../ui/Button.astro";
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import { createWhatsAppUrl } from "../../utils/whatsapp";
+import heroAsset from "../../assets/menu.webp";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const content = business.content[lang];
+
+const whatsappMessage =
+  content.cta.whatsappMessage ||
+  `Halo, saya ingin mendapatkan informasi mengenai ${business.identity.name}.`;
+
+const whatsappUrl = createWhatsAppUrl(
+  business.contact.whatsapp,
+  whatsappMessage,
+  "#contact",
+);
+
+---
+
+<Section class="relative overflow-hidden bg-[#2b0b14] pb-16 pt-16 text-white sm:pb-24 sm:pt-24 lg:pb-28 lg:pt-28">
+  <Container>
+    <div
+      class="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20"
+    >
+      <!-- Content -->
+      <div class="max-w-2xl">
+        <p
+          class="script-accent mb-4"
+        >
+          {lang === "id" ? "Rasa untuk setiap perayaan" : "A memorable culinary experience"}
+        </p>
+
+        <h1
+          class="max-w-3xl text-4xl leading-[0.98] sm:text-6xl lg:text-7xl"
+        >
+          {content.hero.headline}
+        </h1>
+
+        <p
+          class="mt-6 max-w-xl text-base leading-7 text-white/70 sm:text-lg"
+        >
+          {content.hero.subheadline}
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Button href={whatsappUrl} class="rounded-full bg-[#e8a87c] text-[#2b0b14] hover:bg-white">
+            {content.hero.primaryCta}
+          </Button>
+
+          {
+            content.hero.secondaryCta && (
+              <Button href="#services" variant="outline" class="rounded-full border-white/40 text-white hover:bg-white hover:text-[#2b0b14]">
+                {content.hero.secondaryCta}
+              </Button>
+            )
+          }
+        </div>
+
+        {
+          business.location.city && (
+            <p class="mt-6 text-sm text-white/60">
+              {business.location.city}
+              {business.location.province
+                ? `, ${business.location.province}`
+                : ""}
+            </p>
+          )
+        }
+      </div>
+
+      <!-- Image -->
+      <div class="relative">
+        <div class="overflow-hidden rounded-[var(--radius-xl)] border border-white/15 bg-white/10 p-2 shadow-[0_18px_50px_rgba(0,0,0,0.25)]">
+          <img
+            src={heroAsset.src}
+            alt={business.identity.name}
+            class="aspect-[4/3] w-full object-cover"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            sizes="(min-width: 1024px) 45vw, 100vw"
+          />
+        </div>
+      </div>
+    </div>
+  </Container>
+</Section>

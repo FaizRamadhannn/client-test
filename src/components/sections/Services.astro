@@ -1,0 +1,85 @@
+---
+import type { Business } from "../../data/business";
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const services = business.content[lang].services?.length
+  ? business.content[lang].services
+  : business.services;
+
+const sectionTitle =
+  lang === "id" ? "Layanan Kami" : "Our Services";
+
+const sectionDescription =
+  lang === "id"
+    ? "Temukan layanan yang sesuai dengan kebutuhan Anda."
+    : "Explore the services that match your needs.";
+---
+
+<Section id="services">
+  <Container>
+    <SectionHeading
+      eyebrow={lang === "id" ? "Layanan pilihan" : "Curated services"}
+      title={sectionTitle}
+      description={sectionDescription}
+    />
+
+    {
+      services.length > 0 ? (
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((service, index) => (
+            <article class="group rounded border border-[var(--color-border)] bg-white p-7 shadow-[0_12px_30px_rgba(43,11,20,0.05)] transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(43,11,20,0.1)]">
+              <div class="flex items-start justify-between gap-4">
+                <span
+                  class="text-sm font-bold text-[#d4af37]"
+                  aria-hidden="true"
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
+
+              <div class="mt-10 h-1 w-10 bg-[#e8a87c]" aria-hidden="true"></div>
+              <h3 class="mt-5 text-xl leading-tight text-[#6b1d2f]">
+                {service.name}
+              </h3>
+
+              <p class="mt-3 text-sm leading-6 text-[var(--color-muted-foreground)]">
+                {service.description}
+              </p>
+
+              {
+                service.benefit && (
+                  <div class="mt-6 border-t border-[var(--color-border)] pt-5">
+                    <p class="text-sm font-medium uppercase tracking-[0.12em] text-[#6b1d2f]">
+                      {lang === "id" ? "Manfaat" : "Benefit"}
+                    </p>
+
+                    <p class="mt-1 text-sm text-[var(--color-muted-foreground)]">
+                      {service.benefit}
+                    </p>
+                  </div>
+                )
+              }
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] bg-[var(--color-muted)] p-8 text-center">
+          <p class="text-sm text-[var(--color-muted-foreground)]">
+            {lang === "id"
+              ? "Informasi layanan akan tersedia segera."
+              : "Service information will be available soon."}
+          </p>
+        </div>
+      )
+    }
+  </Container>
+</Section>

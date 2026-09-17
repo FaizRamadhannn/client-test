@@ -1,0 +1,87 @@
+---
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+import type { Business } from "../../data/business";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const images = business.gallery;
+---
+
+<Section id="gallery" class="bg-white">
+  <Container>
+    <SectionHeading
+      eyebrow={lang === "id" ? "Galeri" : "Gallery"}
+      title={
+        lang === "id"
+          ? "Lihat lebih dekat"
+          : "Take a closer look"
+      }
+      description={
+        lang === "id"
+          ? "Beberapa gambaran tentang bisnis, layanan, dan aktivitas kami."
+          : "A glimpse into our business, services, and activities."
+      }
+    />
+
+    {
+      images.length > 0 ? (
+        <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {images.map((image, index) => (
+            <figure
+              class:list={[
+                "overflow-hidden rounded border border-border bg-muted",
+                index === 0 && "sm:col-span-2 lg:col-span-2",
+              ]}
+            >
+              {
+                image.url ? (
+                  <img
+                    src={image.url}
+                    alt={image.alt || business.identity.name}
+                    loading="lazy"
+                    decoding="async"
+                    class="aspect-[4/3] h-full w-full object-cover"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    data-fallback-src="/image-placeholder.svg"
+                  />
+                ) : (
+                  <div class="flex aspect-[4/3] items-center justify-center p-6">
+                    <p class="text-center text-sm text-muted-foreground">
+                      {image.description ||
+                        (lang === "id"
+                          ? "Gambar belum tersedia."
+                          : "Image not available.")}
+                    </p>
+                  </div>
+                )
+              }
+
+              {
+                image.description && (
+                  <figcaption class="border-t border-border px-4 py-3 text-xs text-muted-foreground">
+                    {image.description}
+                  </figcaption>
+                )
+              }
+            </figure>
+          ))}
+        </div>
+      ) : (
+        <div class="mt-10 rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] bg-[var(--color-muted)] p-8 text-center">
+          <p class="text-sm text-muted-foreground">
+            {lang === "id"
+              ? "Galeri akan tersedia segera."
+              : "Gallery images will be available soon."}
+          </p>
+        </div>
+      )
+    }
+  </Container>
+</Section>

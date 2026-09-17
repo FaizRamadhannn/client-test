@@ -1,0 +1,67 @@
+---
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+import type { Business } from "../../data/business";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const content = business.content[lang];
+const faqs = content.faq;
+---
+
+<Section id="faq" class="bg-[#faf7f5]">
+  <Container>
+    <SectionHeading
+      eyebrow="FAQ"
+      title={
+        lang === "id"
+          ? "Pertanyaan yang sering ditanyakan"
+          : "Frequently asked questions"
+      }
+      description={
+        lang === "id"
+          ? "Temukan jawaban untuk pertanyaan umum sebelum menghubungi kami."
+          : "Find answers to common questions before getting in touch."
+      }
+    />
+
+    {
+      faqs.length > 0 ? (
+        <div class="mx-auto mt-12 max-w-3xl divide-y divide-[var(--color-border)] rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-background)]">
+          {faqs.map((faq) => (
+            <details class="group px-6 first:rounded-t-[var(--radius-lg)] last:rounded-b-[var(--radius-lg)]">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-5 font-medium [&::-webkit-details-marker]:hidden">
+                <span>{faq.question}</span>
+
+                <span
+                  class="shrink-0 text-xl text-muted-foreground transition-transform group-open:rotate-45"
+                  aria-hidden="true"
+                >
+                  +
+                </span>
+              </summary>
+
+              <div class="pb-5 pr-10 text-sm leading-7 text-muted-foreground">
+                {faq.answer}
+              </div>
+            </details>
+          ))}
+        </div>
+      ) : (
+        <div class="mx-auto mt-10 max-w-3xl rounded-2xl border border-dashed border-border p-8 text-center">
+          <p class="text-sm text-muted-foreground">
+            {lang === "id"
+              ? "Informasi FAQ akan tersedia segera."
+              : "FAQ information will be available soon."}
+          </p>
+        </div>
+      )
+    }
+  </Container>
+</Section>

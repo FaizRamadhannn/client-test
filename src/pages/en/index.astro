@@ -1,0 +1,36 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import Footer from "../../components/layout/Footer.astro";
+
+import Hero from "../../components/sections/Hero.astro";
+import About from "../../components/sections/About.astro";
+import Services from "../../components/sections/Services.astro";
+import WhyChooseUs from "../../components/sections/WhyChooseUs.astro";
+import Process from "../../components/sections/Process.astro";
+import Menu from "../../components/sections/Menu.astro";
+import Testimonials from "../../components/sections/Testimonials.astro";
+import Gallery from "../../components/sections/Gallery.astro";
+import FAQ from "../../components/sections/FAQ.astro";
+import CTA from "../../components/sections/CTA.astro";
+
+import { business } from "../../data/business";
+---
+
+<Layout business={business} lang="en">
+  <Navbar business={business} lang="en"/>
+
+  <main>
+    <Hero business={business} lang="en" />
+    <About business={business} lang="en" />
+    <Services business={business} lang="en" />
+    <WhyChooseUs business={business} lang="en" />
+    <Process business={business} lang="en" />
+    <Menu business={business} lang="en" />
+    <Testimonials business={business} lang="en" />
+    <Gallery business={business} lang="en" />
+    <FAQ business={business} lang="en" />
+    <CTA business={business} lang="en" />
+    <Footer business={business} lang="en" />
+  </main>
+</Layout>

@@ -1,0 +1,64 @@
+---
+import type { Business } from "../../data/business";
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const content = business.content[lang];
+---
+
+<Section id="about" class="bg-[#faf7f5]">
+  <Container>
+    <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+      <!-- Heading -->
+      <div>
+        <SectionHeading
+          eyebrow={lang === "id" ? "Tentang kami" : "Our story"}
+          title={content.about.title}
+          description={content.about.shortDescription}
+        />
+      </div>
+
+      <!-- Description -->
+      <div class="max-w-2xl">
+        {
+          content.about.description && (
+            <p
+              class="text-base leading-8 text-[var(--color-muted-foreground)] sm:text-lg"
+            >
+              {content.about.description}
+            </p>
+          )
+        }
+
+        {
+          business.location.city && (
+            <div class="mt-8 border-t-2 border-[#e8a87c] pt-6">
+              <p class="text-sm font-semibold uppercase tracking-[0.12em] text-[#6b1d2f]">
+                {lang === "id" ? "Berbasis di" : "Based in"}
+              </p>
+
+              <p class="mt-2 text-sm text-[var(--color-muted-foreground)]">
+                {business.location.address}
+                {business.location.address && business.location.city
+                  ? ", "
+                  : ""}
+                {business.location.city}
+                {business.location.province
+                  ? `, ${business.location.province}`
+                  : ""}
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </Container>
+</Section>

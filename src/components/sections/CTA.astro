@@ -1,0 +1,64 @@
+---
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import type { Business } from "../../data/business";
+import {
+  createWhatsAppUrl,
+  normalizeWhatsAppNumber,
+} from "../../utils/whatsapp";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const cta = business.content[lang].cta;
+
+const whatsappNumber = normalizeWhatsAppNumber(business.contact.whatsapp);
+
+const whatsappUrl = createWhatsAppUrl(
+  business.contact.whatsapp,
+  cta.whatsappMessage,
+);
+---
+
+<Section id="contact" class="bg-[#2b0b14] text-white">
+  <Container>
+    <div class="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+      <div class="lg:pt-8">
+        <p class="script-accent">{lang === "id" ? "Mari merencanakan" : "Let’s plan together"}</p>
+        <h2 class="mt-3 text-4xl leading-tight text-white sm:text-5xl">{lang === "id" ? "Ceritakan acara Anda." : "Tell us about your event."}</h2>
+        <p class="mt-5 max-w-md text-sm leading-7 text-white/65 sm:text-base">{cta.description}</p>
+        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" class="mt-8 inline-flex rounded-full border border-[#e8a87c] px-5 py-3 text-sm font-bold text-[#e8a87c] hover:bg-[#e8a87c] hover:text-[#2b0b14]">{cta.buttonText}</a>
+      </div>
+
+      <form id="quote-form" class="rounded bg-white p-6 text-[#2b0b14] shadow-2xl sm:p-8">
+        <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#6b1d2f]">{lang === "id" ? "Permintaan konsultasi" : "Consultation request"}</p>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          <label class="text-sm font-semibold">{lang === "id" ? "Nama lengkap" : "Full name"}<input required name="name" type="text" class="mt-2 w-full border-b border-[#eadfe0] px-0 py-3 text-sm outline-none focus:border-[#6b1d2f]" /></label>
+          <label class="text-sm font-semibold">Email<input required name="email" type="email" class="mt-2 w-full border-b border-[#eadfe0] px-0 py-3 text-sm outline-none focus:border-[#6b1d2f]" /></label>
+          <label class="text-sm font-semibold">{lang === "id" ? "Jenis acara" : "Event type"}<select name="event" class="mt-2 w-full border-b border-[#eadfe0] bg-white px-0 py-3 text-sm outline-none focus:border-[#6b1d2f]"><option>{lang === "id" ? "Pilih jenis acara" : "Select event type"}</option><option>{lang === "id" ? "Pesta keluarga" : "Family celebration"}</option><option>{lang === "id" ? "Acara perusahaan" : "Corporate event"}</option><option>{lang === "id" ? "Pernikahan" : "Wedding"}</option></select></label>
+          <label class="text-sm font-semibold">{lang === "id" ? "Perkiraan tamu" : "Estimated guests"}<input name="guests" type="number" min="1" class="mt-2 w-full border-b border-[#eadfe0] px-0 py-3 text-sm outline-none focus:border-[#6b1d2f]" /></label>
+          <label class="text-sm font-semibold sm:col-span-2">{lang === "id" ? "Tanggal acara" : "Event date"}<input name="date" type="date" min={new Date().toISOString().split("T")[0]} class="mt-2 w-full border-b border-[#eadfe0] px-0 py-3 text-sm outline-none focus:border-[#6b1d2f]" /></label>
+          <label class="text-sm font-semibold sm:col-span-2">{lang === "id" ? "Catatan dan preferensi" : "Notes and preferences"}<textarea name="notes" rows="3" class="mt-2 w-full resize-none border-b border-[#eadfe0] px-0 py-3 text-sm outline-none focus:border-[#6b1d2f]"></textarea></label>
+        </div>
+        <button type="submit" class="mt-6 w-full rounded-full bg-[#6b1d2f] px-5 py-3 text-sm font-bold text-white hover:bg-[#2b0b14]">{lang === "id" ? "Kirim permintaan" : "Send request"}</button>
+        <p id="quote-status" class="mt-3 text-center text-xs text-[#74676a]">{lang === "id" ? "Kami akan merespons dalam 24 jam." : "We will respond within 24 hours."}</p>
+      </form>
+    </div>
+  </Container>
+</Section>
+
+<script define:vars={{ phone: business.contact.whatsapp, language: lang }}>
+  const form = document.querySelector<HTMLFormElement>("#quote-form");
+  const status = document.querySelector<HTMLElement>("#quote-status");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const message = language === "id" ? `Halo, saya ${data.get("name")}. Saya ingin konsultasi catering.\nEmail: ${data.get("email")}\nAcara: ${data.get("event")}\nTamu: ${data.get("guests")}\nTanggal: ${data.get("date")}\nCatatan: ${data.get("notes")}` : `Hello, I am ${data.get("name")}. I would like a catering consultation.\nEmail: ${data.get("email")}\nEvent: ${data.get("event")}\nGuests: ${data.get("guests")}\nDate: ${data.get("date")}\nNotes: ${data.get("notes")}`;
+    if (status) status.textContent = language === "id" ? "Membuka WhatsApp untuk melanjutkan permintaan..." : "Opening WhatsApp to continue your request...";
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+  });
+</script>

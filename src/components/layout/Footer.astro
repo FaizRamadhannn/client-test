@@ -1,0 +1,188 @@
+---
+import Container from "../ui/Container.astro";
+import type { Business } from "../../data/business";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const year = new Date().getFullYear();
+
+const navigation = [
+  {
+    label: lang === "id" ? "Tentang" : "About",
+    href: "#about",
+  },
+  {
+    label: lang === "id" ? "Layanan" : "Services",
+    href: "#services",
+  },
+  {
+    label: lang === "id" ? "Mengapa Kami" : "Why Choose Us",
+    href: "#why-choose-us",
+  },
+  {
+    label: lang === "id" ? "Proses" : "Process",
+    href: "#process",
+  },
+  {
+    label: "FAQ",
+    href: "#faq",
+  },
+];
+
+const socialLinks = [
+  business.contact.instagram
+    ? {
+        label: "Instagram",
+        href: business.contact.instagram,
+      }
+    : null,
+  business.contact.facebook
+    ? {
+        label: "Facebook",
+        href: business.contact.facebook,
+      }
+    : null,
+].filter(Boolean);
+
+const mapsUrl = business.location.googleMapsUrl;
+---
+
+<footer class="border-t border-border bg-background">
+  <Container>
+    <div class="grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-4 lg:py-16">
+      <div class="lg:col-span-2">
+        <a
+          href={lang === "id" ? "/" : "/en/"}
+          class="text-lg font-semibold tracking-tight"
+        >
+          {business.identity.name}
+        </a>
+
+        {
+          business.identity.description && (
+            <p class="mt-4 max-w-md text-sm leading-7 text-muted-foreground">
+              {business.identity.description}
+            </p>
+          )
+        }
+
+        {
+          mapsUrl && (
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mt-5 inline-flex text-sm font-medium underline underline-offset-4"
+            >
+              {lang === "id" ? "Lihat di Google Maps" : "View on Google Maps"}
+            </a>
+          )
+        }
+      </div>
+
+      <div>
+        <h2 class="text-sm font-semibold">
+          {lang === "id" ? "Navigasi" : "Navigation"}
+        </h2>
+
+        <nav class="mt-4" aria-label="Footer navigation">
+          <ul class="space-y-3">
+            {navigation.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+
+      <div>
+        <h2 class="text-sm font-semibold">
+          {lang === "id" ? "Hubungi Kami" : "Contact Us"}
+        </h2>
+
+        <div class="mt-4 space-y-3 text-sm text-muted-foreground">
+          {
+            business.contact.phone && (
+              <a
+                href={`tel:${business.contact.phone}`}
+                class="block transition-colors hover:text-foreground"
+              >
+                {business.contact.phone}
+              </a>
+            )
+          }
+
+          {
+            business.contact.email && (
+              <a
+                href={`mailto:${business.contact.email}`}
+                class="block break-all transition-colors hover:text-foreground"
+              >
+                {business.contact.email}
+              </a>
+            )
+          }
+
+          {
+            (business.location.city || business.location.province) && (
+              <p>
+                {business.location.city}
+                {business.location.city && business.location.province
+                  ? ", "
+                  : ""}
+                {business.location.province}
+              </p>
+            )
+          }
+        </div>
+
+        {
+          socialLinks.length > 0 && (
+            <div class="mt-5 flex gap-4">
+              {socialLinks.map((social) => (
+                <a
+                  href={social?.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-sm font-medium underline underline-offset-4"
+                >
+                  {social?.label}
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-3 border-t border-border py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+      <p>
+        © {year} {business.identity.name}.{" "}
+        {lang === "id" ? "Semua hak dilindungi." : "All rights reserved."}
+      </p>
+
+      {
+        (business.location.city || business.location.province) && (
+          <p>
+            {business.location.city}
+            {business.location.city && business.location.province
+              ? ", "
+              : ""}
+            {business.location.province}
+          </p>
+        )
+      }
+    </div>
+  </Container>
+</footer>

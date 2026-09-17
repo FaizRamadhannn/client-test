@@ -1,0 +1,76 @@
+---
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+import type { Business } from "../../data/business";
+
+interface Props {
+  business: Business;
+  lang?: "id" | "en";
+}
+
+const { business, lang = "id" } = Astro.props;
+
+const content = business.content[lang];
+const steps = content.process;
+---
+
+<Section id="process">
+  <Container>
+    <SectionHeading
+      eyebrow={lang === "id" ? "Proses Kami" : "Our Process"}
+      title={
+        lang === "id"
+          ? "Cara kami bekerja"
+          : "How we work"
+      }
+      description={
+        lang === "id"
+          ? "Proses yang jelas membantu setiap kebutuhan ditangani dengan lebih terarah."
+          : "A clear process helps every project move forward with confidence."
+      }
+    />
+
+    {
+      steps.length > 0 ? (
+          <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {steps.map((step, index) => (
+            <article class="relative">
+              <div class="mb-5 flex items-center gap-4">
+                <span
+                  class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-[#6b1d2f] text-sm font-bold text-[#6b1d2f]"
+                  aria-hidden="true"
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+
+                {
+                  index < steps.length - 1 && (
+                    <div
+                      class="hidden h-px flex-1 bg-[var(--color-border)] lg:block"
+                      aria-hidden="true"
+                    />
+                  )
+                }
+              </div>
+
+              <h3 class="text-lg leading-tight text-[#6b1d2f]">
+                {step.title}
+              </h3>
+
+              <p class="mt-3 text-sm leading-6 text-muted-foreground">
+                {step.description}
+              </p>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="mt-10 text-muted-foreground">
+          {lang === "id"
+            ? "Informasi proses akan tersedia segera."
+            : "Process information will be available soon."}
+        </p>
+      )
+    }
+  </Container>
+</Section>
